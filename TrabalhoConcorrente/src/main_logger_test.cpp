@@ -10,7 +10,7 @@ void worker(TSLogger &logger, int id) {
 }
 
 int main() {
-    TSLogger logger("logs.txt");
+    TSLogger logger("logs/logs.txt");
 
     std::vector<std::thread> threads;
     for (int i = 0; i < 5; i++) {

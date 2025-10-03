@@ -7,9 +7,12 @@
 class ChatClient {
 private:
     TSLogger &logger;
+    int sockfd;
+
 public:
     ChatClient(TSLogger &log);
-    void connect(const std::string &host, int port);
+    void connect_server(const std::string &host, int port);
+    void start();
 };
 
 #endif

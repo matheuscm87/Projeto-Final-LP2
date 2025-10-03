@@ -5,11 +5,17 @@
 #include <thread>
 #include <vector>
 #include <string>
+#include <mutex>
 
 class ChatServer {
 private:
     TSLogger &logger;
-    std::vector<std::thread> client_threads;
+    int server_fd;
+    std::vector<int> clients;
+    std::mutex clients_mutex;
+
+    void handle_client(int client_socket);
+
 public:
     ChatServer(TSLogger &log);
     void start(int port);
