@@ -196,7 +196,7 @@ A IA (ChatGPT, modelo GPT-5) foi utilizada apenas para análise e revisão de co
 
 ## Referências
 
-- Material da disciplina “Programação Concorrente (LPII - 2025.1)” – Prof. Augusto de Holanda, UFPB.
+- Material da disciplina “Programação Concorrente (LPII - 2025.1)” 
 - Documentação C++17 (std::thread, std::mutex, std::condition_variable).
 - Recomendações POSIX para sockets TCP.
 - Saída de testes obtida via tests/run_test.sh.
