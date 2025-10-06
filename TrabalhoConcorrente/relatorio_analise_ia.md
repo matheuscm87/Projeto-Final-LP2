@@ -194,6 +194,61 @@ A IA (ChatGPT, modelo GPT-5) foi utilizada apenas para análise e revisão de co
 
 ---
 
+## Mapeamento de Requisitos → Código
+----------------------------------------------------
+1. **Servidor TCP concorrente aceitando múltiplos clientes**  
+   Implementado em `src/chat_server.cpp`, nas funções `ChatServer::start` e `handle_client`.  
+   O servidor cria um socket TCP, aceita múltiplas conexões simultâneas e inicia uma thread para cada cliente conectado.
+
+2. **Broadcast de mensagens entre clientes**  
+   Implementado em `ChatServer::dispatcher_loop`.  
+   Essa thread consome mensagens da fila concorrente e as retransmite a todos os outros clientes conectados.
+
+3. **Cliente CLI (envio e recepção)**  
+   Implementado em `src/chat_client.cpp`, na função `ChatClient::start`.  
+   O cliente cria uma thread para receber mensagens e um loop principal que lê e envia mensagens digitadas no terminal.
+
+4. **Logging concorrente**  
+   Implementado em `src/tslog.cpp` e `include/tslog.hpp`.  
+   O `TSLogger` garante que múltiplas threads possam gravar mensagens no arquivo de log sem sobrescrita ou interferência, utilizando um `std::mutex` interno.
+
+5. **Teste de logging concorrente**  
+   Implementado em `src/main_logger_test.cpp`.  
+   Cria várias threads simultâneas que escrevem no mesmo log, testando a integridade e thread-safety do `TSLogger`.
+
+6. **Proteção de estruturas compartilhadas**  
+   Realizada no servidor (`ChatServer`), utilizando os mutexes `clients_mutex` e `history_mutex`.  
+   Garante exclusão mútua ao acessar listas de clientes e histórico de mensagens.
+
+7. **Fila concorrente de mensagens (monitor)**  
+   Implementada em `include/tsqueue.hpp` com a classe `ThreadSafeQueue`.  
+   A fila encapsula um `std::mutex` e uma `std::condition_variable`, funcionando como um monitor clássico para comunicação entre produtor (cliente) e consumidor (dispatcher).
+
+8. **Semáforo (controle de sincronização adicional)**  
+   Implementado também em `include/tsqueue.hpp`, na classe `Semaphore`.  
+   É uma implementação genérica e portável, disponível para controle de recursos caso necessário.
+
+9. **Tratamento de erros e exceções**  
+   Presente em `src/chat_client.cpp`, `src/chat_server.cpp` e `src/main_client.cpp`.  
+   Utiliza `throw std::runtime_error` e blocos `try/catch` com mensagens de erro amigáveis no terminal.
+
+10. **Makefile funcional**  
+    O arquivo `Makefile` compila cliente, servidor e teste (`make all`), gerando os binários em `bin/`.  
+    Compatível com Linux e Windows (detecta sistema operacional).
+
+11. **Script de teste automático**  
+    Implementado em `tests/run_test.sh`.  
+    Executa o servidor em background e simula três clientes diferentes enviando e recebendo mensagens automaticamente.
+
+12. **Diagramas de sequência cliente-servidor**  
+    Armazenados na pasta `diagramas/`.  
+    Representam graficamente o fluxo de mensagens entre cliente e servidor e as interações entre threads.
+
+13. **Relatório de análise com IA**  
+    O presente documento (`relatorio_analise_ia_final.md`) contém a análise detalhada dos riscos de concorrência, mitigação e o mapeamento de requisitos.
+
+--- 
+
 ## Referências
 
 - Material da disciplina “Programação Concorrente (LPII - 2025.1)” 
